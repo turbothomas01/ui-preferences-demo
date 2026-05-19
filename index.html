@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en" data-density="comfortable" data-nav="left" data-motion="calm">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thomas UI Preference Lab</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070a10;
+      --panel: #101722;
+      --panel-2: #151f2e;
+      --text: #f6f8fb;
+      --muted: #b8c2d4;
+      --border: #344155;
+      --orange: rgb(255, 122, 26);
+      --orange-soft: rgba(255, 122, 26, .18);
+      --blue: #4aa3ff;
+      --blue-soft: rgba(74, 163, 255, .18);
+      --green: #56d68a;
+      --danger: #ff6b7a;
+      --shadow: 0 24px 70px rgba(0,0,0,.42);
+      --radius: 18px;
+      --focus: 0 0 0 4px rgba(74,163,255,.28), 0 0 0 2px var(--blue) inset;
+      --font-size: 18px;
+      --gap: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      font-size: var(--font-size);
+      line-height: 1.55;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(255,122,26,.22), transparent 34rem),
+        radial-gradient(circle at 88% 18%, rgba(74,163,255,.16), transparent 30rem),
+        linear-gradient(180deg, #090d14 0%, #05070b 100%);
+    }
+
+    a { color: var(--blue); }
+    button, input, select { font: inherit; }
+    button, select, input[type="range"] { min-height: 44px; }
+    button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible { outline: none; box-shadow: var(--focus); }
+
+    .skip-link {
+      position: absolute; left: 1rem; top: .5rem; transform: translateY(-160%);
+      z-index: 20; background: var(--blue); color: #03101f; padding: .7rem 1rem; border-radius: 999px; font-weight: 800;
+    }
+    .skip-link:focus { transform: translateY(0); }
+
+    .app { display: grid; grid-template-columns: 18rem 1fr; min-height: 100vh; }
+    header {
+      position: sticky; top: 0; z-index: 5;
+      display: flex; justify-content: space-between; gap: 1rem; align-items: center;
+      padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
+      background: rgba(7,10,16,.82); backdrop-filter: blur(18px);
+    }
+    .sidebar {
+      border-right: 1px solid var(--border); padding: 1.2rem; background: rgba(9,13,20,.84);
+      position: sticky; top: 0; height: 100vh;
+    }
+    .brand { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.5rem; }
+    .mark { width: 42px; height: 42px; border-radius: 14px; background: linear-gradient(135deg, var(--orange), #ffb26b); box-shadow: 0 0 34px var(--orange-soft); }
+    .brand strong { display:block; font-size: 1.08rem; }
+    .brand span { display:block; color: var(--muted); font-size: .9rem; }
+    nav { display: grid; gap: .4rem; }
+    .nav-item {
+      border: 1px solid transparent; border-radius: 14px; padding: .78rem .9rem;
+      color: var(--muted); text-decoration: none; display: flex; justify-content: space-between; gap: .75rem;
+    }
+    .nav-item[aria-current="page"] { color: var(--text); background: var(--orange-soft); border-color: rgba(255,122,26,.42); }
+    .nav-item:hover { background: var(--panel); color: var(--text); }
+
+    main { min-width: 0; }
+    .hero { padding: clamp(1rem, 3vw, 2.5rem); display:grid; gap: var(--gap); }
+    .eyebrow { color: var(--orange); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; font-size: .8rem; }
+    h1 { font-size: clamp(2rem, 5vw, 4rem); line-height: 1.05; margin: 0; max-width: 12ch; }
+    .lead { color: var(--muted); font-size: 1.15rem; max-width: 68ch; margin: 0; }
+
+    .actions { display:flex; flex-wrap: wrap; gap: .75rem; }
+    .btn {
+      border: 1px solid var(--border); border-radius: 999px; padding: .78rem 1.05rem; cursor: pointer;
+      color: var(--text); background: var(--panel); font-weight: 800;
+    }
+    .btn.primary { background: linear-gradient(135deg, var(--orange), #ff9b4d); color: #160801; border-color: rgba(255,255,255,.15); }
+    .btn.secondary { background: var(--blue-soft); border-color: rgba(74,163,255,.45); }
+    .btn:hover { transform: translateY(-1px); }
+
+    .grid { display:grid; grid-template-columns: minmax(0, 1.5fr) minmax(18rem, .9fr); gap: var(--gap); }
+    .panel {
+      background: linear-gradient(180deg, rgba(21,31,46,.95), rgba(13,19,29,.95));
+      border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
+      padding: 1.2rem;
+    }
+    .panel h2, .panel h3 { margin: 0 0 .75rem; line-height: 1.15; }
+    .panel p { color: var(--muted); margin: 0 0 1rem; }
+    .cards { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .9rem; }
+    .card { padding: 1rem; border: 1px solid var(--border); border-radius: 16px; background: rgba(255,255,255,.035); }
+    .card strong { display:block; font-size: 1.35rem; }
+    .card span { color: var(--muted); font-size: .94rem; }
+    .status-list { display:grid; gap: .65rem; margin:0; padding:0; list-style:none; }
+    .status-list li { display:flex; justify-content:space-between; gap:1rem; padding: .75rem; border-radius: 14px; background: rgba(255,255,255,.04); }
+    .tag { border-radius: 999px; padding: .15rem .55rem; font-size: .84rem; font-weight: 800; background: var(--blue-soft); color: #cae5ff; }
+    .tag.orange { background: var(--orange-soft); color: #ffd8bf; }
+    .tag.green { background: rgba(86,214,138,.16); color: #caffdc; }
+
+    .lab { display:grid; gap: .8rem; }
+    .control { display:grid; gap:.35rem; }
+    label { font-weight: 800; }
+    select, input[type="range"] { width: 100%; }
+    select { background: #0a1019; color: var(--text); border:1px solid var(--border); border-radius: 12px; padding: .65rem .8rem; }
+    .hint { color: var(--muted); font-size: .92rem; }
+    .toast {
+      position: fixed; right: 1rem; bottom: 1rem; max-width: min(28rem, calc(100vw - 2rem));
+      border-radius: 16px; border:1px solid rgba(255,122,26,.45); background: #111827; padding: 1rem;
+      transform: translateY(calc(100% + 1.5rem)); opacity: 0; pointer-events: none;
+      transition: transform .24s ease, opacity .24s ease; box-shadow: var(--shadow);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    [data-density="compact"] { --font-size: 16px; --gap: 12px; --radius: 14px; }
+    [data-density="large"] { --font-size: 20px; --gap: 24px; --radius: 22px; }
+    [data-nav="top"] .app { grid-template-columns: 1fr; }
+    [data-nav="top"] .sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+    [data-nav="top"] nav { display:flex; flex-wrap:wrap; }
+    [data-nav="top"] .brand { margin-bottom:0; }
+    [data-motion="reduced"] *, [data-motion="reduced"] .toast { transition: none !important; animation: none !important; }
+
+    @media (max-width: 900px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: static; height:auto; border-right:0; border-bottom: 1px solid var(--border); }
+      .grid, .cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <div class="app">
+    <aside class="sidebar" aria-label="Main navigation">
+      <div class="brand" aria-label="Thomas preferred UI theme">
+        <div class="mark" aria-hidden="true"></div>
+        <div><strong>Preference Lab</strong><span>Dark · Orange · Blue</span></div>
+      </div>
+      <nav>
+        <a class="nav-item" href="#overview" aria-current="page">Overview <span aria-hidden="true">⌘1</span></a>
+        <a class="nav-item" href="#patterns">Patterns <span aria-hidden="true">⌘2</span></a>
+        <a class="nav-item" href="#tweak">Tweak panel <span aria-hidden="true">⌘3</span></a>
+        <a class="nav-item" href="#notes">Notes <span aria-hidden="true">⌘4</span></a>
+      </nav>
+    </aside>
+
+    <main id="main">
+      <header>
+        <div><strong>Accessible dark interface baseline</strong><br><span class="hint">Orange is primary identity. Blue is action/support accent.</span></div>
+        <button class="btn secondary" id="announceBtn">Announce current settings</button>
+      </header>
+
+      <section class="hero" id="overview" aria-labelledby="title">
+        <div>
+          <div class="eyebrow">Thomas default UI direction</div>
+          <h1 id="title">Calm, clear, high-contrast control room.</h1>
+          <p class="lead">This is a living style demo for future projects: dark mode by default, orange primary highlights, blue secondary accents, clear placement, large targets, strong focus states, and no color-only meaning.</p>
+        </div>
+
+        <div class="actions" aria-label="Primary actions">
+          <button class="btn primary" id="saveBtn">Save this direction</button>
+          <button class="btn secondary" id="focusBtn">Show focus style</button>
+          <button class="btn" id="contrastBtn">Check contrast notes</button>
+        </div>
+
+        <div class="grid">
+          <section class="panel" id="patterns" aria-labelledby="patterns-title">
+            <h2 id="patterns-title">Common element placement</h2>
+            <p>Recommended baseline: navigation on the left for dashboards, important actions near the top, status summaries before detail lists, and settings in a predictable right-side or lower panel.</p>
+            <div class="cards" aria-label="Preference cards">
+              <div class="card"><strong>Dark first</strong><span>Reduce glare and keep color intentional.</span></div>
+              <div class="card"><strong>Orange primary</strong><span>Identity, selected state, major call-to-action.</span></div>
+              <div class="card"><strong>Blue accent</strong><span>Links, secondary actions, focus and guidance.</span></div>
+            </div>
+          </section>
+
+          <section class="panel" aria-labelledby="status-title">
+            <h2 id="status-title">Accessibility checklist</h2>
+            <ul class="status-list">
+              <li><span>Keyboard focus visible</span><span class="tag green">Yes</span></li>
+              <li><span>Minimum target size</span><span class="tag green">44px+</span></li>
+              <li><span>Color-only status avoided</span><span class="tag orange">Labels</span></li>
+              <li><span>Screen reader landmarks</span><span class="tag">Ready</span></li>
+            </ul>
+          </section>
+        </div>
+
+        <div class="grid">
+          <section class="panel" id="tweak" aria-labelledby="tweak-title">
+            <h2 id="tweak-title">Tweak this interface</h2>
+            <p>Change these controls and tell me what feels right or wrong. I can turn the winner into a reusable standard for future projects.</p>
+            <form class="lab">
+              <div class="control">
+                <label for="density">Density</label>
+                <select id="density"><option value="comfortable">Comfortable</option><option value="compact">Compact</option><option value="large">Large text / spacious</option></select>
+                <span class="hint">Controls text size, spacing, and panel radius.</span>
+              </div>
+              <div class="control">
+                <label for="nav">Navigation placement</label>
+                <select id="nav"><option value="left">Left sidebar</option><option value="top">Top navigation</option></select>
+                <span class="hint">Left sidebar is usually better for dashboards; top nav can be better for small tools.</span>
+              </div>
+              <div class="control">
+                <label for="motion">Motion</label>
+                <select id="motion"><option value="calm">Calm transitions</option><option value="reduced">Reduced motion</option></select>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel" id="notes" aria-labelledby="notes-title">
+            <h2 id="notes-title">What I’ll remember if approved</h2>
+            <p>Dark mode default. Orange <code>rgb(255, 122, 26)</code> as primary identity/accent. Blue as secondary action/focus accent. Left navigation for dashboards. Large readable text. Strong keyboard and screen-reader support.</p>
+            <button class="btn primary" id="copyBtn">Copy preference summary</button>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite" id="toast">Ready.</div>
+
+  <script>
+    const root = document.documentElement;
+    const toast = document.getElementById('toast');
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => toast.classList.remove('show'), 3600);
+    }
+    for (const id of ['density','nav','motion']) {
+      document.getElementById(id).addEventListener('change', event => {
+        root.dataset[id] = event.target.value;
+        showToast(`${event.target.previousElementSibling.textContent}: ${event.target.selectedOptions[0].textContent}`);
+      });
+    }
+    document.getElementById('saveBtn').addEventListener('click', () => showToast('Direction marked as preferred: dark, orange primary, blue accent, accessible by default.'));
+    document.getElementById('focusBtn').addEventListener('click', () => { document.getElementById('copyBtn').focus(); showToast('Focus moved to Copy preference summary. The blue ring should be obvious.'); });
+    document.getElementById('contrastBtn').addEventListener('click', () => showToast('Contrast baseline: near-white text on dark panels, orange/blue used with labels, not alone.'));
+    document.getElementById('announceBtn').addEventListener('click', () => showToast(`Current settings: ${density.selectedOptions[0].textContent}, ${nav.selectedOptions[0].textContent}, ${motion.selectedOptions[0].textContent}.`));
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      const summary = 'Dark mode default; orange rgb(255,122,26) primary; blue accent/focus; accessible high contrast; large readable text; strong focus states; left nav for dashboards unless a top nav fits better.';
+      try { await navigator.clipboard.writeText(summary); showToast('Preference summary copied.'); }
+      catch { showToast(summary); }
+    });
+  </script>
+</body>
+</html>
