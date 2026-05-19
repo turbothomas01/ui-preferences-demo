@@ -137,7 +137,8 @@
       .app { grid-template-columns: 1fr; }
       header { align-items: flex-start; }
       .mobile-menu-button {
-        display: inline-flex; align-items: center; gap: .55rem; flex-shrink: 0;
+        display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+        width: 44px; min-width: 44px; padding-inline: 0;
       }
       .sidebar {
         position: fixed; inset: 0 auto 0 0; z-index: 30;
@@ -192,7 +193,7 @@
 
     <main id="main">
       <header>
-        <button class="btn mobile-menu-button" id="sidebarOpen" type="button" aria-controls="sidebar" aria-expanded="false">☰ Menu</button>
+        <button class="btn mobile-menu-button" id="sidebarOpen" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="Open navigation">☰</button>
         <div><strong>Accessible dark interface baseline</strong><br><span class="hint">Orange is primary identity. Blue is action/support accent.</span></div>
         <button class="btn secondary" id="announceBtn">Announce current settings</button>
       </header>
