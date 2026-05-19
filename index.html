@@ -77,6 +77,19 @@
     }
     .nav-item[aria-current="page"] { color: var(--text); background: var(--orange-soft); border-color: rgba(255,122,26,.42); }
     .nav-item:hover { background: var(--panel); color: var(--text); }
+    .sidebar-settings {
+      margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);
+    }
+    .sidebar-settings summary {
+      min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+      border: 1px solid var(--border); border-radius: 14px; padding: .72rem .9rem;
+      color: var(--text); background: rgba(255,255,255,.035); cursor: pointer; font-weight: 800;
+    }
+    .sidebar-settings summary::after { content: "+"; color: var(--blue); font-size: 1.2rem; }
+    .sidebar-settings[open] summary { border-color: rgba(74,163,255,.45); background: var(--blue-soft); }
+    .sidebar-settings[open] summary::after { content: "–"; }
+    .sidebar-settings summary:focus-visible { outline: none; box-shadow: var(--focus); }
+    .sidebar-settings .lab { margin-top: .9rem; }
 
     main { min-width: 0; }
     .hero { padding: clamp(1rem, 3vw, 2.5rem); display:grid; gap: var(--gap); }
@@ -186,9 +199,27 @@
       <nav>
         <a class="nav-item" href="#overview" aria-current="page">Overview <span aria-hidden="true">1</span></a>
         <a class="nav-item" href="#patterns">Patterns <span aria-hidden="true">2</span></a>
-        <a class="nav-item" href="#tweak">Tweak panel <span aria-hidden="true">3</span></a>
-        <a class="nav-item" href="#notes">Notes <span aria-hidden="true">4</span></a>
+        <a class="nav-item" href="#notes">Notes <span aria-hidden="true">3</span></a>
       </nav>
+      <details class="sidebar-settings" id="settingsMenu">
+        <summary>Settings</summary>
+        <form class="lab" aria-label="Interface display settings">
+          <div class="control">
+            <label for="density">Density</label>
+            <select id="density"><option value="comfortable">Comfortable</option><option value="compact">Compact</option><option value="large">Large text / spacious</option></select>
+            <span class="hint">Controls text size, spacing, and panel radius.</span>
+          </div>
+          <div class="control">
+            <label for="nav">Navigation placement</label>
+            <select id="nav"><option value="left">Left sidebar</option><option value="top">Top navigation</option></select>
+            <span class="hint">Left sidebar for dashboards; top nav for small tools.</span>
+          </div>
+          <div class="control">
+            <label for="motion">Motion</label>
+            <select id="motion"><option value="calm">Calm transitions</option><option value="reduced">Reduced motion</option></select>
+          </div>
+        </form>
+      </details>
     </aside>
 
     <main id="main">
@@ -234,31 +265,14 @@
         </div>
 
         <div class="grid">
-          <section class="panel" id="tweak" aria-labelledby="tweak-title">
-            <h2 id="tweak-title">Tweak this interface</h2>
-            <p>Change these controls and tell me what feels right or wrong. I can turn the winner into a reusable standard for future projects.</p>
-            <form class="lab">
-              <div class="control">
-                <label for="density">Density</label>
-                <select id="density"><option value="comfortable">Comfortable</option><option value="compact">Compact</option><option value="large">Large text / spacious</option></select>
-                <span class="hint">Controls text size, spacing, and panel radius.</span>
-              </div>
-              <div class="control">
-                <label for="nav">Navigation placement</label>
-                <select id="nav"><option value="left">Left sidebar</option><option value="top">Top navigation</option></select>
-                <span class="hint">Left sidebar is usually better for dashboards; top nav can be better for small tools.</span>
-              </div>
-              <div class="control">
-                <label for="motion">Motion</label>
-                <select id="motion"><option value="calm">Calm transitions</option><option value="reduced">Reduced motion</option></select>
-              </div>
-            </form>
-          </section>
-
           <section class="panel" id="notes" aria-labelledby="notes-title">
             <h2 id="notes-title">What I’ll remember if approved</h2>
-            <p>Dark mode default. Orange <code>rgb(255, 122, 26)</code> as primary identity/accent. Blue as secondary action/focus accent. Left navigation for dashboards. Large readable text. Strong keyboard and screen-reader support.</p>
+            <p>Dark mode default. Orange <code>rgb(255, 122, 26)</code> as primary identity/accent. Blue as secondary action/focus accent. Settings live in the sidebar on desktop and inside the menu drawer on mobile. Large readable text. Strong keyboard and screen-reader support.</p>
             <button class="btn primary" id="copyBtn">Copy preference summary</button>
+          </section>
+          <section class="panel" aria-labelledby="structure-title">
+            <h2 id="structure-title">Interface structure</h2>
+            <p>Keep the main content focused. Put persistent controls and display preferences in the sidebar on desktop, and in the collapsed menu drawer on mobile.</p>
           </section>
         </div>
       </section>
