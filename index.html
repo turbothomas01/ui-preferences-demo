@@ -63,6 +63,9 @@
       border-right: 1px solid var(--border); padding: 1.2rem; background: rgba(9,13,20,.84);
       position: sticky; top: 0; height: 100vh;
     }
+    .sidebar-top { display: contents; }
+    .mobile-menu-button, .sidebar-close { display: none; }
+    .sidebar-backdrop { display: none; }
     .brand { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.5rem; }
     .mark { width: 42px; height: 42px; border-radius: 14px; background: linear-gradient(135deg, var(--orange), #ffb26b); box-shadow: 0 0 34px var(--orange-soft); }
     .brand strong { display:block; font-size: 1.08rem; }
@@ -132,7 +135,38 @@
 
     @media (max-width: 900px) {
       .app { grid-template-columns: 1fr; }
-      .sidebar { position: static; height:auto; border-right:0; border-bottom: 1px solid var(--border); }
+      header { align-items: flex-start; }
+      .mobile-menu-button {
+        display: inline-flex; align-items: center; gap: .55rem; flex-shrink: 0;
+      }
+      .sidebar {
+        position: fixed; inset: 0 auto 0 0; z-index: 30;
+        width: min(20rem, 86vw); height: 100dvh; overflow-y: auto;
+        border-right: 1px solid var(--border); border-bottom: 0;
+        box-shadow: 24px 0 70px rgba(0,0,0,.58);
+        transform: translateX(-105%);
+        transition: transform .22s ease;
+      }
+      .sidebar-top { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: 1.5rem; }
+      .brand { margin-bottom: 0; }
+      .sidebar-close {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 44px; min-width: 44px; min-height: 44px;
+        border-radius: 14px; border: 1px solid var(--border);
+        background: var(--panel); color: var(--text); cursor: pointer;
+      }
+      .sidebar-backdrop {
+        position: fixed; inset: 0; z-index: 25;
+        background: rgba(0,0,0,.58); backdrop-filter: blur(3px);
+      }
+      body.sidebar-open { overflow: hidden; }
+      body.sidebar-open .sidebar { transform: translateX(0); }
+      body.sidebar-open .sidebar-backdrop { display: block; }
+      [data-nav="top"] .sidebar {
+        position: fixed; height: 100dvh; border-right: 1px solid var(--border); border-bottom: 0;
+        display: block; align-items: initial; justify-content: initial;
+      }
+      [data-nav="top"] nav { display: grid; }
       .grid, .cards { grid-template-columns: 1fr; }
     }
   </style>
@@ -140,10 +174,13 @@
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
   <div class="app">
-    <aside class="sidebar" aria-label="Main navigation">
-      <div class="brand" aria-label="Thomas preferred UI theme">
-        <div class="mark" aria-hidden="true"></div>
-        <div><strong>Preference Lab</strong><span>Dark · Orange · Blue</span></div>
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+      <div class="sidebar-top">
+        <div class="brand" aria-label="Thomas preferred UI theme">
+          <div class="mark" aria-hidden="true"></div>
+          <div><strong>Preference Lab</strong><span>Dark · Orange · Blue</span></div>
+        </div>
+        <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Close navigation">×</button>
       </div>
       <nav>
         <a class="nav-item" href="#overview" aria-current="page">Overview <span aria-hidden="true">1</span></a>
@@ -155,6 +192,7 @@
 
     <main id="main">
       <header>
+        <button class="btn mobile-menu-button" id="sidebarOpen" type="button" aria-controls="sidebar" aria-expanded="false">☰ Menu</button>
         <div><strong>Accessible dark interface baseline</strong><br><span class="hint">Orange is primary identity. Blue is action/support accent.</span></div>
         <button class="btn secondary" id="announceBtn">Announce current settings</button>
       </header>
@@ -226,11 +264,46 @@
     </main>
   </div>
 
+  <button class="sidebar-backdrop" id="sidebarBackdrop" type="button" aria-label="Close navigation" hidden></button>
+
   <div class="toast" role="status" aria-live="polite" id="toast">Ready.</div>
 
   <script>
     const root = document.documentElement;
     const toast = document.getElementById('toast');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOpen = document.getElementById('sidebarOpen');
+    const sidebarClose = document.getElementById('sidebarClose');
+    const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+    const mobileQuery = window.matchMedia('(max-width: 900px)');
+    let lastSidebarTrigger = null;
+
+    function setSidebarState(open, restoreFocus = true) {
+      document.body.classList.toggle('sidebar-open', open);
+      sidebarOpen.setAttribute('aria-expanded', String(open));
+      sidebarBackdrop.hidden = !open;
+      sidebar.setAttribute('aria-hidden', String(mobileQuery.matches && !open));
+      if ('inert' in sidebar) sidebar.inert = mobileQuery.matches && !open;
+      if (open) {
+        lastSidebarTrigger = lastSidebarTrigger || document.activeElement;
+        sidebarClose.focus();
+      } else if (restoreFocus && lastSidebarTrigger) {
+        lastSidebarTrigger.focus();
+      }
+    }
+
+    function syncSidebarForViewport() {
+      if (mobileQuery.matches) {
+        setSidebarState(false, false);
+      } else {
+        document.body.classList.remove('sidebar-open');
+        sidebarOpen.setAttribute('aria-expanded', 'false');
+        sidebarBackdrop.hidden = true;
+        sidebar.removeAttribute('aria-hidden');
+        if ('inert' in sidebar) sidebar.inert = false;
+      }
+    }
+
     function showToast(message) {
       toast.textContent = message;
       toast.classList.add('show');
@@ -247,6 +320,17 @@
     document.getElementById('focusBtn').addEventListener('click', () => { document.getElementById('copyBtn').focus(); showToast('Focus moved to Copy preference summary. The blue ring should be obvious.'); });
     document.getElementById('contrastBtn').addEventListener('click', () => showToast('Contrast baseline: near-white text on dark panels, orange/blue used with labels, not alone.'));
     document.getElementById('announceBtn').addEventListener('click', () => showToast(`Current settings: ${density.selectedOptions[0].textContent}, ${nav.selectedOptions[0].textContent}, ${motion.selectedOptions[0].textContent}.`));
+    sidebarOpen.addEventListener('click', () => { lastSidebarTrigger = sidebarOpen; setSidebarState(true); });
+    sidebarClose.addEventListener('click', () => setSidebarState(false));
+    sidebarBackdrop.addEventListener('click', () => setSidebarState(false));
+    sidebar.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+      if (mobileQuery.matches) setSidebarState(false, false);
+    }));
+    window.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && document.body.classList.contains('sidebar-open')) setSidebarState(false);
+    });
+    mobileQuery.addEventListener('change', syncSidebarForViewport);
+    syncSidebarForViewport();
     document.getElementById('copyBtn').addEventListener('click', async () => {
       const summary = 'Dark mode default; orange rgb(255,122,26) primary; blue accent/focus; accessible high contrast; large readable text; strong focus states; left nav for dashboards unless a top nav fits better.';
       try { await navigator.clipboard.writeText(summary); showToast('Preference summary copied.'); }
